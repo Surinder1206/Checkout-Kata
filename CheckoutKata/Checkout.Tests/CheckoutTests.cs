@@ -15,5 +15,29 @@ internal class CheckoutTests
         act.Should().Throw<ArgumentNullException>()
             .WithParameterName("pricingRules");
     }
+
+    [TestCase(null)]
+    [TestCase("")]
+    [TestCase("   ")]
+    public void Scan_should_throw_argument_exception_when_SKU_is_null_or_empty_or_whitespace(string sku)
+    {
+        // Arrange
+        var pricingRules = new Dictionary<string, int>
+        {
+            { "A", 50 },
+            { "B", 30 },
+            { "C", 20 },
+            { "D", 15 }
+        };
+        var checkout = new Checkout(pricingRules);
+
+        // Act
+        Action act = () => checkout.Scan(sku);
+
+        // Assert
+        act.Should().Throw<ArgumentException>()
+            .WithParameterName("item");
+
+    }
 }
 
