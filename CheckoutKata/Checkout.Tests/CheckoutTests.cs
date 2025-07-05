@@ -84,80 +84,30 @@ internal class CheckoutTests
         totalPrice.Should().Be(0);
     }
 
-    [Test]
-    public void GetTotalPrice_should_return_total_price_when_item_A_is_scanned()
+    [TestCase("A", 50)]
+    [TestCase("B", 30)]
+    [TestCase("C", 20)]
+    [TestCase("D", 15)]
+    public void GetTotalPrice_should_return_total_price_when_single_item_is_scanned(string scannedItem, int expectedPrice)
     {
         // Arrange
         var pricingRules = new Dictionary<string, int>
         {
-            { "A", 50 }
+            { "A", 50 },
+            { "B", 30 },
+            { "C", 20 },
+            { "D", 15 }
         };
 
         Checkout checkout = new(pricingRules);
-        checkout.Scan("A");
+        checkout.Scan(scannedItem);
 
         // Act
         var totalPrice = checkout.GetTotalPrice();
 
         // Assert
-        totalPrice.Should().Be(50);
+        totalPrice.Should().Be(expectedPrice);
     }
 
-    [Test]
-    public void GetTotalPrice_should_return_total_price_when_item_B_is_scanned()
-    {
-        // Arrange
-        var pricingRules = new Dictionary<string, int>
-        {
-            { "B", 30 }
-        };
-
-        Checkout checkout = new(pricingRules);
-        checkout.Scan("B");
-
-        // Act
-        var totalPrice = checkout.GetTotalPrice();
-
-        // Assert
-        totalPrice.Should().Be(30);
-    }
-
-    [Test]
-    public void GetTotalPrice_should_return_total_price_when_item_C_is_scanned()
-    {
-        // Arrange
-        var pricingRules = new Dictionary<string, int>
-        {
-            { "C", 20 }
-        };
-
-        Checkout checkout = new(pricingRules);
-        checkout.Scan("C");
-
-        // Act
-        var totalPrice = checkout.GetTotalPrice();
-
-        // Assert
-        totalPrice.Should().Be(20);
-    }
-
-    [Test]
-    public void GetTotalPrice_should_return_total_price_when_item_D_is_scanned()
-    {
-        // Arrange
-        var pricingRules = new Dictionary<string, int>
-        {
-            { "D", 20 }
-        };
-
-        Checkout checkout = new(pricingRules);
-        checkout.Scan("D");
-
-        // Act
-        var totalPrice = checkout.GetTotalPrice();
-
-        // Assert
-        totalPrice.Should().Be(15);
-    }
 }
 

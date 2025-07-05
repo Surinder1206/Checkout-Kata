@@ -20,24 +20,12 @@ public class Checkout(Dictionary<string, int> pricingRules) : ICheckout
 
     public int GetTotalPrice()
     {
-        if (_scannedItems.ContainsKey("A"))
+        foreach (var item in _scannedItems)
         {
-            return 50;
-        }
-
-        if (_scannedItems.ContainsKey("B"))
-        {
-            return 30;
-        }
-
-        if (_scannedItems.ContainsKey("C"))
-        {
-            return 20;
-        }
-
-        if (_scannedItems.ContainsKey("D"))
-        {
-            return 15;
+            if (_pricingRules.TryGetValue(item.Key, out int unitPrice))
+            {
+                return unitPrice;
+            }
         }
 
         return 0;
