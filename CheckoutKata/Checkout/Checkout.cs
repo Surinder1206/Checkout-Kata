@@ -5,9 +5,12 @@ public class Checkout(Dictionary<string, int> pricingRules) : ICheckout
     private readonly Dictionary<string, int> _pricingRules = pricingRules
         ?? throw new ArgumentNullException(nameof(pricingRules), "Pricing rules must not be null");
 
+
     public void Scan(string item)
     {
-        throw new NotImplementedException();
+        if (string.IsNullOrWhiteSpace(item))
+            throw new ArgumentNullException(nameof(item), "SKU must not be null or empty");
+
     }
 
     public int GetTotalPrice()
