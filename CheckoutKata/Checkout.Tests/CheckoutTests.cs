@@ -121,5 +121,24 @@ internal class CheckoutTests
         // Assert
         totalPrice.Should().Be(30);
     }
+
+    [Test]
+    public void GetTotalPrice_should_return_total_price_when_item_C_is_scanned()
+    {
+        // Arrange
+        var pricingRules = new Dictionary<string, int>
+        {
+            { "C", 20 }
+        };
+
+        Checkout checkout = new(pricingRules);
+        checkout.Scan("C");
+
+        // Act
+        var totalPrice = checkout.GetTotalPrice();
+
+        // Assert
+        totalPrice.Should().Be(20);
+    }
 }
 
