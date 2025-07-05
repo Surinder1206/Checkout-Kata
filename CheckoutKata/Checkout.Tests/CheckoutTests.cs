@@ -109,8 +109,13 @@ internal class CheckoutTests
         totalPrice.Should().Be(expectedPrice);
     }
 
-    [Test]
-    public void GetTotalPrice_should_return_total_price_when_two_different_items_A_and_B_are_scanned()
+    [TestCase(new[] { "A", "B" }, 80)]
+    [TestCase(new[] { "A", "C" }, 70)]
+    [TestCase(new[] { "A", "D" }, 65)]
+    [TestCase(new[] { "B", "C" }, 50)]
+    [TestCase(new[] { "A", "B", "C" }, 100)]
+    [TestCase(new[] { "A", "B", "C", "D" }, 115)]
+    public void GetTotalPrice_should_return_correct_total_for_multiple_scanned_items(string[] scannedItems, int expectedTotal)
     {
         // Arrange
         var pricingRules = new Dictionary<string, int>
@@ -120,17 +125,17 @@ internal class CheckoutTests
             { "C", 20 },
             { "D", 15 }
         };
-
         var checkout = new Checkout(pricingRules);
-        checkout.Scan("A");
-        checkout.Scan("B");
+        foreach (var item in scanItems)
+        {
+            checkout.Scan(item);
+        }
 
         // Act
         var total = checkout.GetTotalPrice();
 
         // Assert
-        total.Should().Be(80);
+        total.Should().Be(expectedTotal);
     }
-
 }
 
