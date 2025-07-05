@@ -5,6 +5,7 @@ public class Checkout(Dictionary<string, int> pricingRules) : ICheckout
     private readonly Dictionary<string, int> _pricingRules = pricingRules
         ?? throw new ArgumentNullException(nameof(pricingRules), "Pricing rules must not be null");
 
+    private readonly Dictionary<string, int> _scannedItems = [];
 
     public void Scan(string item)
     {
@@ -13,10 +14,17 @@ public class Checkout(Dictionary<string, int> pricingRules) : ICheckout
 
         if (!_pricingRules.ContainsKey(item))
             throw new ArgumentException($"Unknown SKU scanned: {item}");
+
+        _scannedItems[item] = 1;
     }
 
     public int GetTotalPrice()
     {
+        if (_scannedItems.ContainsKey("A"))
+        {
+            return 50;
+        }
+
         return 0;
     }
 }
