@@ -62,5 +62,26 @@ internal class CheckoutTests
         act.Should().Throw<ArgumentException>()
            .WithMessage($"Unknown SKU scanned: {sku}");
     }
+
+    [Test]
+    public void GetTotalPrice_should_return_zero_when_no_items_scanned()
+    {
+        // Arrange
+        var pricingRules = new Dictionary<string, int>
+        {
+            { "A", 50 },
+            { "B", 30 },
+            { "C", 20 },
+            { "D", 15 }
+        };
+
+        Checkout checkout = new(pricingRules);
+
+        // Act
+        var totalPrice = checkout.GetTotalPrice();
+
+        // Assert
+        totalPrice.Should().Be(0);
+    }
 }
 
