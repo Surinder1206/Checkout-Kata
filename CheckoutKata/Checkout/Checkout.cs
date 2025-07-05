@@ -35,6 +35,11 @@ public class Checkout(Dictionary<string, int> pricingRules) : ICheckout
             return 20;
         }
 
+        if (_scannedItems.ContainsKey("D"))
+        {
+            return 15;
+        }
+
         return 0;
     }
 }
