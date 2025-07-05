@@ -11,6 +11,9 @@ public class Checkout(Dictionary<string, int> pricingRules) : ICheckout
         if (string.IsNullOrWhiteSpace(item))
             throw new ArgumentNullException(nameof(item), "SKU must not be null or empty");
 
+        if (!_pricingRules.ContainsKey(item))
+            throw new ArgumentException($"Unknown SKU scanned: {item}");
+
     }
 
     public int GetTotalPrice()
