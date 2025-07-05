@@ -20,14 +20,15 @@ public class Checkout(Dictionary<string, int> pricingRules) : ICheckout
 
     public int GetTotalPrice()
     {
+        var totalPrice = 0;
         foreach (var item in _scannedItems)
         {
             if (_pricingRules.TryGetValue(item.Key, out int unitPrice))
             {
-                return unitPrice;
+                totalPrice += unitPrice;
             }
         }
 
-        return 0;
+        return totalPrice;
     }
 }
