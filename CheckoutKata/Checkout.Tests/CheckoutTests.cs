@@ -113,5 +113,20 @@ internal class CheckoutTests
         // Assert
         total.Should().Be(expectedTotal);
     }
+
+    [Test]
+    public void GetTotalPrice_should_return_total_when_same_item_scanned_multiple_times()
+    {
+        // Arrange
+        var checkout = new Checkout(_pricingRules);
+        checkout.Scan("A");
+        checkout.Scan("A");
+
+        // Act
+        var total = checkout.GetTotalPrice();
+
+        // Assert
+        total.Should().Be(100);
+    }
 }
 
