@@ -39,5 +39,28 @@ internal class CheckoutTests
             .WithParameterName("item");
 
     }
+
+    [Test]
+    public void Scan_should_throw_argument_exception_when_unknown_item_is_scanned()
+    {
+        // Arrange
+        var pricingRules = new Dictionary<string, int>
+        {
+            { "A", 50 },
+            { "B", 30 },
+            { "C", 20 },
+            { "D", 15 }
+        };
+
+        var sku = "invalid";
+        var checkout = new Checkout(pricingRules);
+
+        // Act
+        Action act = () => checkout.Scan(sku);
+
+        // Assert
+        act.Should().Throw<ArgumentException>()
+           .WithMessage($"Unknown SKU scanned: {sku}");
+    }
 }
 
