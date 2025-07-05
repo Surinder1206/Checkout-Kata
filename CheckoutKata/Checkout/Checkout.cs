@@ -13,11 +13,10 @@ public class Checkout(Dictionary<string, int> pricingRules) : ICheckout
 
         if (!_pricingRules.ContainsKey(item))
             throw new ArgumentException($"Unknown SKU scanned: {item}");
-
     }
 
     public int GetTotalPrice()
     {
-        throw new NotImplementedException();
+        return 0;
     }
 }
