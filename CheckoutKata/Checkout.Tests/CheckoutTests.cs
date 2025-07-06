@@ -1,4 +1,4 @@
-﻿using Checkout.Pricing;
+﻿using Checkout.Tests.Builder;
 using FluentAssertions;
 using NUnit.Framework;
 
@@ -6,24 +6,14 @@ namespace Checkout.Tests;
 
 internal class CheckoutTests
 {
-    private IEnumerable<IPricingRule> _pricingRules;
-
-    [SetUp]
-    public void Initialize()
-    {
-        _pricingRules = [
-            new CompositePricingRule("A", [ new BulkPriceRule("A", 50, 3, 130)]),
-            new CompositePricingRule("B", [ new BulkPriceRule("B", 30, 2, 45)]),
-            new UnitPriceRule("C", 20),
-            new UnitPriceRule("D", 15)
-       ];
-    }
 
     [Test]
     public void Constructor_should_throw_argument_null_exception_when_pricing_rules_are_null()
     {
         // Arrange & Act
-        Action act = () => new Checkout(null!);
+        Action act = () => new CheckoutBuilder()
+        .WithPricingRules(null!)
+        .Build();
 
         // Assert
         act.Should().Throw<ArgumentNullException>()
@@ -36,7 +26,7 @@ internal class CheckoutTests
     public void Scan_should_throw_argument_exception_when_SKU_is_null_or_empty_or_whitespace(string sku)
     {
         // Arrange
-        var checkout = new Checkout(_pricingRules);
+        var checkout = new CheckoutBuilder().Build();
 
         // Act
         Action act = () => checkout.Scan(sku);
@@ -52,7 +42,7 @@ internal class CheckoutTests
     {
         // Arrange
         var sku = "invalid";
-        var checkout = new Checkout(_pricingRules);
+        var checkout = new CheckoutBuilder().Build();
 
         // Act
         Action act = () => checkout.Scan(sku);
@@ -66,7 +56,7 @@ internal class CheckoutTests
     public void GetTotalPrice_should_return_zero_when_no_items_scanned()
     {
         // Arrange
-        Checkout checkout = new(_pricingRules);
+        var checkout = new CheckoutBuilder().Build();
 
         // Act
         var totalPrice = checkout.GetTotalPrice();
@@ -82,8 +72,9 @@ internal class CheckoutTests
     public void GetTotalPrice_should_return_total_price_when_single_item_is_scanned(string scannedItem, int expectedPrice)
     {
         // Arrange
-        Checkout checkout = new(_pricingRules);
-        checkout.Scan(scannedItem);
+        var checkout = new CheckoutBuilder()
+            .WithScan([scannedItem])
+            .Build();
 
         // Act
         var totalPrice = checkout.GetTotalPrice();
@@ -101,11 +92,9 @@ internal class CheckoutTests
     public void GetTotalPrice_should_return_correct_total_for_multiple_scanned_items(string[] scannedItems, int expectedTotal)
     {
         // Arrange
-        var checkout = new Checkout(_pricingRules);
-        foreach (var item in scannedItems)
-        {
-            checkout.Scan(item);
-        }
+        var checkout = new CheckoutBuilder()
+            .WithScan(scannedItems)
+            .Build();
 
         // Act
         var total = checkout.GetTotalPrice();
@@ -118,9 +107,9 @@ internal class CheckoutTests
     public void GetTotalPrice_should_return_total_when_same_item_A_scanned_two_times()
     {
         // Arrange
-        var checkout = new Checkout(_pricingRules);
-        checkout.Scan("A");
-        checkout.Scan("A");
+        var checkout = new CheckoutBuilder()
+            .WithScan(["A", "A"])
+            .Build();
 
         // Act
         var total = checkout.GetTotalPrice();
@@ -133,10 +122,9 @@ internal class CheckoutTests
     public void GetTotalPrice_should_return_discounted_price_when_three_A_items_are_scanned()
     {
         // Arrange
-        var checkout = new Checkout(_pricingRules);
-        checkout.Scan("A");
-        checkout.Scan("A");
-        checkout.Scan("A");
+        var checkout = new CheckoutBuilder()
+            .WithScan(["A", "A", "A"])
+            .Build();
 
         // Act
         var total = checkout.GetTotalPrice();
@@ -149,13 +137,9 @@ internal class CheckoutTests
     public void GetTotalPrice_should_return_discounted_price_when_six_A_items_are_scanned()
     {
         // Arrange
-        var checkout = new Checkout(_pricingRules);
-        checkout.Scan("A");
-        checkout.Scan("A");
-        checkout.Scan("A");
-        checkout.Scan("A");
-        checkout.Scan("A");
-        checkout.Scan("A");
+        var checkout = new CheckoutBuilder()
+            .WithScan(["A", "A", "A", "A", "A", "A"])
+            .Build();
 
         // Act
         var total = checkout.GetTotalPrice();
@@ -168,9 +152,9 @@ internal class CheckoutTests
     public void GetTotalPrice_should_return_discounted_price_when_two_B_items_are_scanned()
     {
         // Arrange
-        var checkout = new Checkout(_pricingRules);
-        checkout.Scan("B");
-        checkout.Scan("B");
+        var checkout = new CheckoutBuilder()
+            .WithScan(["B", "B"])
+            .Build();
 
         // Act
         var total = checkout.GetTotalPrice();
@@ -183,11 +167,9 @@ internal class CheckoutTests
     public void GetTotalPrice_should_return_discounted_price_when_four_B_items_are_scanned()
     {
         // Arrange
-        var checkout = new Checkout(_pricingRules);
-        checkout.Scan("B");
-        checkout.Scan("B");
-        checkout.Scan("B");
-        checkout.Scan("B");
+        var checkout = new CheckoutBuilder()
+            .WithScan(["B", "B", "B", "B"])
+            .Build();
 
         // Act
         var total = checkout.GetTotalPrice();
