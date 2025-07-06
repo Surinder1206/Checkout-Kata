@@ -1,8 +1,11 @@
-﻿namespace Checkout;
+﻿using Checkout.Pricing;
 
-public class Checkout(Dictionary<string, int> pricingRules) : ICheckout
+namespace Checkout;
+
+public class Checkout(IEnumerable<IPricingRule> pricingRules) : ICheckout
 {
-    private readonly Dictionary<string, int> _pricingRules = pricingRules
+    private readonly IDictionary<string, IPricingRule> _pricingRules =
+        pricingRules?.ToDictionary(r => r.SKU)
         ?? throw new ArgumentNullException(nameof(pricingRules), "Pricing rules must not be null");
 
     private readonly Dictionary<string, int> _scannedItems = [];
@@ -26,26 +29,12 @@ public class Checkout(Dictionary<string, int> pricingRules) : ICheckout
     public int GetTotalPrice()
     {
         var totalPrice = 0;
-        foreach (var item in _scannedItems)
+
+        foreach (var scannedItem in _scannedItems)
         {
-            if (_pricingRules.TryGetValue(item.Key, out int unitPrice))
+            if (_pricingRules.TryGetValue(scannedItem.Key, out var pricingRule))
             {
-                if (item.Key == "A" && item.Value >= 3)
-                {
-                    var parirsCount = item.Value / 3;
-                    var reminder = item.Value % 3;
-                    totalPrice += parirsCount * 130 + reminder * unitPrice;
-                }
-                else if (item.Key == "B" && item.Value >= 2)
-                {
-                    var parirsCount = item.Value / 2;
-                    var reminder = item.Value % 2;
-                    totalPrice += parirsCount * 45 + reminder * unitPrice;
-                }
-                else
-                {
-                    totalPrice += unitPrice * item.Value;
-                }
+                totalPrice += pricingRule.CalculatePrice(scannedItem.Value);
             }
         }
 

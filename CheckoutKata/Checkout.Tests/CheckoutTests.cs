@@ -1,22 +1,22 @@
-﻿using FluentAssertions;
+﻿using Checkout.Pricing;
+using FluentAssertions;
 using NUnit.Framework;
 
 namespace Checkout.Tests;
 
 internal class CheckoutTests
 {
-    private Dictionary<string, int> _pricingRules;
+    private IEnumerable<IPricingRule> _pricingRules;
 
     [SetUp]
     public void Initialize()
     {
-        _pricingRules = new Dictionary<string, int>
-        {
-            { "A", 50 },
-            { "B", 30 },
-            { "C", 20 },
-            { "D", 15 }
-        };
+        _pricingRules = [
+            new CompositePricingRule("A", [ new BulkPriceRule("A", 50, 3, 130)]),
+            new CompositePricingRule("B", [ new BulkPriceRule("B", 30, 2, 45)]),
+            new UnitPriceRule("C", 20),
+            new UnitPriceRule("D", 15)
+       ];
     }
 
     [Test]
@@ -195,6 +195,5 @@ internal class CheckoutTests
         // Assert
         total.Should().Be(90);
     }
-
 }
 
