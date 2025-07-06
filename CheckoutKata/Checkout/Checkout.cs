@@ -30,9 +30,11 @@ public class Checkout(Dictionary<string, int> pricingRules) : ICheckout
         {
             if (_pricingRules.TryGetValue(item.Key, out int unitPrice))
             {
-                if (item.Key == "A" && item.Value == 3)
+                if (item.Key == "A" && item.Value >= 3)
                 {
-                    totalPrice += 130;
+                    var parirsCount = item.Value / 3;
+                    var reminder = item.Value % 3;
+                    totalPrice += parirsCount * 130 + reminder * unitPrice;
                 }
                 else
                 {
