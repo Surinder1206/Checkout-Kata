@@ -36,9 +36,11 @@ public class Checkout(Dictionary<string, int> pricingRules) : ICheckout
                     var reminder = item.Value % 3;
                     totalPrice += parirsCount * 130 + reminder * unitPrice;
                 }
-                else if (item.Key == "B" && item.Value == 2)
+                else if (item.Key == "B" && item.Value >= 2)
                 {
-                    totalPrice += 45; // Special price for 2 B's
+                    var parirsCount = item.Value / 2;
+                    var reminder = item.Value % 2;
+                    totalPrice += parirsCount * 45 + reminder * unitPrice;
                 }
                 else
                 {
