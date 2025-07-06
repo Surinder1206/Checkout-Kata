@@ -15,6 +15,11 @@ public class Checkout(Dictionary<string, int> pricingRules) : ICheckout
         if (!_pricingRules.ContainsKey(item))
             throw new ArgumentException($"Unknown SKU scanned: {item}");
 
+        if (_scannedItems.TryGetValue(item, out var count))
+        {
+            _scannedItems[item] = count + 1;
+            return;
+        }
         _scannedItems[item] = 1;
     }
 
@@ -25,7 +30,7 @@ public class Checkout(Dictionary<string, int> pricingRules) : ICheckout
         {
             if (_pricingRules.TryGetValue(item.Key, out int unitPrice))
             {
-                totalPrice += unitPrice;
+                totalPrice += unitPrice * item.Value;
             }
         }
 
