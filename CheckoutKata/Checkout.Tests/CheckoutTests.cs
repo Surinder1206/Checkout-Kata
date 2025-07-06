@@ -179,5 +179,22 @@ internal class CheckoutTests
         total.Should().Be(45);
     }
 
+    [Test]
+    public void GetTotalPrice_should_return_discounted_price_when_four_B_items_are_scanned()
+    {
+        // Arrange
+        var checkout = new Checkout(_pricingRules);
+        checkout.Scan("B");
+        checkout.Scan("B");
+        checkout.Scan("B");
+        checkout.Scan("B");
+
+        // Act
+        var total = checkout.GetTotalPrice();
+
+        // Assert
+        total.Should().Be(90);
+    }
+
 }
 
