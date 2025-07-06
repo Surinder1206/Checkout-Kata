@@ -115,7 +115,7 @@ internal class CheckoutTests
     }
 
     [Test]
-    public void GetTotalPrice_should_return_total_when_same_item_scanned_multiple_times()
+    public void GetTotalPrice_should_return_total_when_same_item_A_scanned_two_times()
     {
         // Arrange
         var checkout = new Checkout(_pricingRules);
@@ -127,6 +127,22 @@ internal class CheckoutTests
 
         // Assert
         total.Should().Be(100);
+    }
+
+    [Test]
+    public void GetTotalPrice_should_return_discounted_price_when_three_A_items_scanned()
+    {
+        // Arrange
+        var checkout = new Checkout(_pricingRules);
+        checkout.Scan("A");
+        checkout.Scan("A");
+        checkout.Scan("A");
+
+        // Act
+        var total = checkout.GetTotalPrice();
+
+        // Assert
+        total.Should().Be(130);
     }
 }
 
